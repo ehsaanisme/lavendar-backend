@@ -1,15 +1,13 @@
-// services/pdfService.js
-
 import { createRequire } from 'module';
 import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import * as pdfjsLib from 'pdfjs-dist';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
-const pdfWorkerPath = join(dirname(require.resolve('pdfjs-dist/package.json')), 'build', 'pdf.worker.mjs');
+const pdfWorkerPath = pathToFileURL(join(dirname(require.resolve('pdfjs-dist/package.json')), 'build', 'pdf.worker.mjs')).href;
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerPath;
 
 export async function parsePdf(pdfData) {

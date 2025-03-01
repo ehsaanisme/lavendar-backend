@@ -1,4 +1,3 @@
-// tests/pdfService.test.js
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -30,7 +29,6 @@ async function testPdfChunking() {
         chunks.forEach((chunk, index) => {
             console.log(`# Chunk ${index + 1}: ${chunk.length} characters`);
             console.log(chunk);
-            // console.log(`Preview: ${chunk.substring(0, 100)}...`);
         });
         
         return chunks;
