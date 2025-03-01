@@ -54,25 +54,49 @@ const openai = new OpenAI({ apiKey: env.openaiApiKey });
     const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
-            { role: "system", content: "Create a multiple-choice question about the given topic. Do not include a 'Question:' prefix. List four answer choices (A, B, C, D), specify the correct answer as a single letter (A, B, C, or D), and provide two helpful hints without stating 'Correct Answer:' explicitly." },
+            { 
+                role: "system", 
+                content: `Create a multiple-choice question about the given topic.
+                - Do NOT include 'Question:' at the beginning.
+                - Provide exactly four answer choices in the format:
+                  A) Option text
+                  B) Option text
+                  C) Option text
+                  D) Option text
+                - Specify the correct answer as a single letter (A, B, C, or D).
+                - Provide two hints that give additional information WITHOUT stating the correct answer directly.`
+            },
             { role: "user", content: `Topic: ${topic}` }
         ],
         temperature: 0.7
     });
 
-    const mcq = response.choices[0].message.content.split("\n").map(line => line.trim());
+    const content = response.choices[0].message.content.trim().split("\n");
+
+    // Extract values safely
+    let question = content[0];
+    let options = content.slice(1, 5).map(opt => opt.replace(/^[A-D][).] /, "")); // Remove "A) " or "A. "
+    let correctAnswer = content.find(line => line.startsWith("Correct Answer: "));
+    let hintOne = content.find(line => line.startsWith("Hint 1: "));
+    let hintTwo = content.find(line => line.startsWith("Hint 2: "));
+
+    // Ensure correct extraction
+    correctAnswer = correctAnswer ? correctAnswer.replace("Correct Answer: ", "").trim() : "A"; // Default to A if not found
+    hintOne = hintOne ? hintOne.replace("Hint 1: ", "").trim() : "No hint available.";
+    hintTwo = hintTwo ? hintTwo.replace("Hint 2: ", "").trim() : "No hint available.";
 
     return {
-        question: mcq[0],  // No "Question:" prefix
-        optionA: mcq[1].replace(/^A[).] /, ""),  // Removes "A) " or "A. "
-        optionB: mcq[2].replace(/^B[).] /, ""),
-        optionC: mcq[3].replace(/^C[).] /, ""),
-        optionD: mcq[4].replace(/^D[).] /, ""),
-        correctAnswer: mcq[5].replace(/^Correct Answer: /, "").trim(), // Single letter A, B, C, or D
-        hintOne: mcq[6].replace(/^Hint 1: /, "").trim(),  // Removes "Hint 1: "
-        hintTwo: mcq[7].replace(/^Hint 2: /, "").trim()   // Removes "Hint 2: "
+        question,
+        optionA: options[0] || "Option A missing",
+        optionB: options[1] || "Option B missing",
+        optionC: options[2] || "Option C missing",
+        optionD: options[3] || "Option D missing",
+        correctAnswer,
+        hintOne,
+        hintTwo
     };
 }
+
 
 /**
  * Generates a specified number of unique MCQs based on extracted topics.
