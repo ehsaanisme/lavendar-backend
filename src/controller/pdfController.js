@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { parsePdf } from '../service/pdfService.js';
+import { parsePdfInChunks } from '../service/pdfService.js';
 import { generateQuestions } from '../service/openaiService.js';
 
 export const processPDFController = async (req, res) => {
@@ -10,7 +10,9 @@ export const processPDFController = async (req, res) => {
         }
 
         const filePath = req.file.path;
+        console.log('Processing PDF:', filePath);
         const questionCount = req.body.questionCount;
+        console.log('Question count:', questionCount);
         const fileData = fs.readFileSync(filePath);
 
         // Extract text from the PDF file in chunks
