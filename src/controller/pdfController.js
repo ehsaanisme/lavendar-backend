@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { parsePDF } from '../services/pdfService.js';
-import { generateQuestions } from '../services/openaiService.js';
+import { parsePdf } from '../service/pdfService.js';
+import { generateQuestions } from '../service/openaiService.js';
 
 export const processPDFController = async (req, res) => {
     try {
@@ -15,10 +15,9 @@ export const processPDFController = async (req, res) => {
 
         const fileData = fs.readFileSync(filePath);
 
-        // Extract text from the PDF file
+       
         const extractedText = await parsePDF(fileData);
 
-        // Generate questions using the extracted text
         const questions = await generateQuestions(extractedText, questionCount);
 
 

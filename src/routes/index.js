@@ -1,9 +1,8 @@
-import {Router} from 'express';
-import videoRoutes from "./videoRoutes.js";
+import { Router } from 'express';
+import pdfRoutes from './pdfRoutes.js';
 
 const router = Router();
 
-// Add your routes here!
-router.use('/video', videoRoutes)
+router.use('/pdf', pdfRoutes);
 
 export default router;

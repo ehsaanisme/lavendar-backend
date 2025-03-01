@@ -6,6 +6,6 @@ const router = Router();
 const upload = multer({ dest: "uploads/" });
 
 
-router.post("/process", upload.single("file"), processPDFController);
+router.post("/pdf", upload.single("file"), processPDFController);
 
 export default router;
