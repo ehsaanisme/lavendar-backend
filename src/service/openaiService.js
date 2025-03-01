@@ -56,47 +56,28 @@ const openai = new OpenAI({ apiKey: env.openaiApiKey });
         messages: [
             { 
                 role: "system", 
-                content: `Create a multiple-choice question about the given topic.
-                - Do NOT include 'Question:' at the beginning.
-                - Provide exactly four answer choices in the format:
-                  A) Option text
-                  B) Option text
-                  C) Option text
-                  D) Option text
-                - Specify the correct answer as a single letter (A, B, C, or D).
-                - Provide two hints that give additional information WITHOUT stating the correct answer directly.`
+                content: `You are a JSON generator. 
+                Given a topic, return a JSON object with the following format:
+                {
+                    "question": "The multiple-choice question",
+                    "optionA": "First answer choice",
+                    "optionB": "Second answer choice",
+                    "optionC": "Third answer choice",
+                    "optionD": "Fourth answer choice",
+                    "correctAnswer": "A single letter: A, B, C, or D",
+                    "hintOne": "A useful hint for the question",
+                    "hintTwo": "Another helpful hint"
+                }
+                Ensure the JSON output is valid, with no extra text, no explanations, and no 'Question:' prefix in the question.`
             },
             { role: "user", content: `Topic: ${topic}` }
         ],
-        temperature: 0.7
+        temperature: 0.7,
+        response_format: "json" // Ensures the response is strictly JSON
     });
 
-    const content = response.choices[0].message.content.trim().split("\n");
-
-    // Extract values safely
-    let question = content[0];
-    let options = content.slice(1, 5).map(opt => opt.replace(/^[A-D][).] /, "")); // Remove "A) " or "A. "
-    let correctAnswer = content.find(line => line.startsWith("Correct Answer: "));
-    let hintOne = content.find(line => line.startsWith("Hint 1: "));
-    let hintTwo = content.find(line => line.startsWith("Hint 2: "));
-
-    // Ensure correct extraction
-    correctAnswer = correctAnswer ? correctAnswer.replace("Correct Answer: ", "").trim() : "A"; // Default to A if not found
-    hintOne = hintOne ? hintOne.replace("Hint 1: ", "").trim() : "No hint available.";
-    hintTwo = hintTwo ? hintTwo.replace("Hint 2: ", "").trim() : "No hint available.";
-
-    return {
-        question,
-        optionA: options[0] || "Option A missing",
-        optionB: options[1] || "Option B missing",
-        optionC: options[2] || "Option C missing",
-        optionD: options[3] || "Option D missing",
-        correctAnswer,
-        hintOne,
-        hintTwo
-    };
+    return JSON.parse(response.choices[0].message.content);
 }
-
 
 /**
  * Generates a specified number of unique MCQs based on extracted topics.
