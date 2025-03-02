@@ -1,7 +1,6 @@
 import fs from 'fs';
-import path from 'path';
-import { parsePdfInChunks } from '../service/pdfService.js';
-import { generateQuestions } from '../service/openaiService.js';
+import { parsePdfInChunks } from '../services/pdfService.js';
+import { generateQuestions } from '../services/openaiService.js';
 
 export const processPDFController = async (req, res) => {
     try {

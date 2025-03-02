@@ -86,9 +86,9 @@ For Windows users, adapt the commands accordingly.
   git clone [Backend Repository URL]
   cd [Backend Repository Folder]
   ```
-- Copy the `.env.example` file to `.env` and configure it:
+- Copy the `.env.sample` file to `.env` and configure it:
   ```bash
-  cp .env.example .env
+  cp .env.sample .env
   ```
   **Ensure you provide a valid OpenAI API key inside `.env`.**
 

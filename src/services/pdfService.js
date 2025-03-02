@@ -1,10 +1,8 @@
 import { createRequire } from 'module';
 import { dirname, join } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { pathToFileURL } from 'url';
 import * as pdfjsLib from 'pdfjs-dist';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
 const pdfWorkerPath = pathToFileURL(join(dirname(require.resolve('pdfjs-dist/package.json')), 'build', 'pdf.worker.mjs')).href;
@@ -12,10 +10,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerPath;
 
 export async function parsePdf(pdfData) {
     try {
-        // Ensure we're working with Uint8Array
+        // Expecting Uint8Array
         const data = Buffer.isBuffer(pdfData) ? new Uint8Array(pdfData) : pdfData;
 
-        // Load the PDF document
         const loadingTask = pdfjsLib.getDocument({ data });
         const pdfDocument = await loadingTask.promise;
         
