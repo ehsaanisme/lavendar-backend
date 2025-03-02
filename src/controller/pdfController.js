@@ -22,6 +22,8 @@ export const processPDFController = async (req, res) => {
 
         const questions = await generateQuestions(combinedText, questionCount);
 
+        console.log("Questions generated. Questions:", questions)
+
         fs.unlinkSync(filePath);
 
         res.status(200).json({ success: true, questions });

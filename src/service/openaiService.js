@@ -54,8 +54,13 @@ async function generateMCQ(topic) {
         ],
         temperature: 0.7
     });
+    
+    const json_result = JSON.parse(response.choices[0].message.content)
+    
+    console.log("MCQ Topic", topic); 
+    console.log("MCQ Result ^:", json_result);
 
-    return JSON.parse(response.choices[0].message.content);
+    return json_result;
 }
 
 /**
@@ -65,6 +70,7 @@ async function generateMCQ(topic) {
  * @returns {Promise<Object[]>} - Array of generated MCQs.
  */
 export async function generateQuestions(text, count) {
+    console.log("Generating topics...");
     const topics = await generateTopics(text);
     
     // Ensure we get enough questions even if there are fewer topics
@@ -74,6 +80,9 @@ export async function generateQuestions(text, count) {
         if (selectedTopics.length >= count) break;
     }
 
+    console.log("Topics generated:", topics, "\nGenerating mcqs...");
+
     const mcqPromises = selectedTopics.slice(0, count).map(topic => generateMCQ(topic));
+
     return Promise.all(mcqPromises);
 }
